@@ -1,5 +1,9 @@
 package org.pac.games.physics;
 
+/**
+ * A rectangle. Moving the rectangle should be handled by the
+ * physics engine.
+ */
 public class Rectangle{
     private double x,y,width,height;
     public Rectangle(double x, double y, double width, double height){
@@ -41,6 +45,9 @@ public class Rectangle{
         return y+height/2.;
     }
 
+    /**
+     * Returns the smallest possible rectangle that contains 'a' and 'b'.
+     */ 
     public static Rectangle getEnclosing(Rectangle a, Rectangle b){
         double minX = a.leftX();
         double maxX = a.rightX();
@@ -53,6 +60,9 @@ public class Rectangle{
         return new Rectangle(minX, minY, maxX-minX, maxY-minY);
     }
 
+    /**
+     * @return True if 'other' is touching or overlapping this rectangle, false otherwise.
+     */
     public boolean intersects(Rectangle other){
         return (
             rightX() >= other.leftX() && 
@@ -62,10 +72,21 @@ public class Rectangle{
         );
     }
 
+    /**
+     * @return True if the specified point is touching or overlapping this rectangle, 
+     *         false otherwise.
+     */
     public boolean intersects(double x, double y){
         return leftX()<=x && rightX()>=x && topY()<=y && bottomY()>=y;
     }
 
+    /**
+     * Assuming that this rectangle is stationary, returns the earliest time
+     * when the specified moving point will intersect (or has intersected)
+     * this rectangle. If the point will never intersect this rectangle,
+     * Double.NaN is returned. If the point has always intersected this
+     * rectangle, Double.NEGATIVE_INFINITY is returned. 
+     */
     public double firstIntersect(double x, double y, double dx, double dy){
         //find when intersects x
         double startIntersectX, endIntersectX;
@@ -129,6 +150,13 @@ public class Rectangle{
             return startIntersectX;
     }
 
+    /**
+     * Assuming that this rectangle is stationary, returns the earliest time
+     * when the specified moving rectangle will intersect (or has intersected)
+     * this rectangle. If the point will never intersect this rectangle,
+     * Double.NaN is returned. If the point has always intersected this
+     * rectangle, Double.NEGATIVE_INFINITY is returned. 
+     */
     public double firstIntersect(Rectangle other, double dx, double dy){
         //find when intersects x
         double startIntersectX, endIntersectX;
@@ -192,12 +220,20 @@ public class Rectangle{
             return startIntersectX;
     }
 
+    /**
+     * Returns the length of the X intersection between this rectangle and 'other',
+     * assuming that they do intersect at all.
+     */
     public double getXOverlap(Rectangle other){
         if(leftX()<other.leftX())
             return other.leftX()-rightX();
         else
             return leftX()-other.rightX();
     }
+    /**
+     * Returns the length of the Y intersection between this rectangle and 'other',
+     * assuming that they do intersect at all.
+     */
     public double getYOverlap(Rectangle other){
         if(topY()<other.topY())
             return other.topY()-bottomY();

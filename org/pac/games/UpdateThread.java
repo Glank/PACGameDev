@@ -1,7 +1,11 @@
 package org.pac.games;
 
+/**
+ * The thread that a GameComponent starts whenever it becomes visible.
+ * You shouldn't ever need to manually instantiate this class.
+ */
 public class UpdateThread extends Thread{
-    /**60 frames per second**/
+    /** 60 frames per second */
     public static final float DEFAULT_FRAMERATE = 60f;
     private GameComponent component;
     private int delay; //millis

@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 
 /**
- * A window that just contains a GameComponent and can serve
+ * A window that just contains a GameComponent and can serve as
  * a base class for simple games.
  */
 public abstract class SimpleGameWindow extends JFrame 
