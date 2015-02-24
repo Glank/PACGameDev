@@ -73,6 +73,7 @@ public class BounceEngine implements CollisionListener, GameUpdater{
     }
     
     public void handelCollision(CollisionInstance instance){
+        System.out.println("Reached.");
         Bouncer a = boundsIndex.get(instance.getA());
         Bouncer b = boundsIndex.get(instance.getB());
         if(a==null || b==null)

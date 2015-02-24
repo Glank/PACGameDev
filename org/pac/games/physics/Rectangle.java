@@ -225,19 +225,51 @@ public class Rectangle{
      * assuming that they do intersect at all.
      */
     public double getXOverlap(Rectangle other){
-        if(leftX()<other.leftX())
-            return other.leftX()-rightX();
-        else
-            return leftX()-other.rightX();
+        if(leftX()<other.leftX()){
+            if(rightX()<other.rightX()){
+                // either they're overlapping, or other is to the right of this
+                return rightX()-other.leftX();
+            }
+            else{
+                //this encloses other
+                return other.width();
+            }
+        }
+        else{
+            if(rightX()>other.rightX()){
+                // either they're overlapping, or other is to the left of this
+                return other.rightX()-leftX();
+            }
+            else{
+                //other encloses this
+                return width();
+            }
+        }
     }
     /**
      * Returns the length of the Y intersection between this rectangle and 'other',
      * assuming that they do intersect at all.
      */
     public double getYOverlap(Rectangle other){
-        if(topY()<other.topY())
-            return other.topY()-bottomY();
-        else
-            return topY()-other.bottomY();
+        if(topY()<other.topY()){
+            if(bottomY()<other.bottomY()){
+                // either they're overlapping, or other is to the right of this
+                return bottomY()-other.topY();
+            }
+            else{
+                //this encloses other
+                return other.height();
+            }
+        }
+        else{
+            if(bottomY()>other.bottomY()){
+                // either they're overlapping, or other is to the left of this
+                return other.bottomY()-topY();
+            }
+            else{
+                //other encloses this
+                return height();
+            }
+        }
     }
 }

@@ -3,3 +3,4 @@ bin
 *.jar
 docs
 pushDocs.sh
+.*.swp
