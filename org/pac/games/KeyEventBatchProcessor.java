@@ -3,6 +3,31 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * <p>
+ * A wrapper for a KeyListener so that it can safely work with the game update
+ * thread. All updates to the game must be done through the game update thread,
+ * so handling user input (which is on the swing thread I believe) is somewhat
+ * of a problem. To fix this, you can use this class to catch all of the events
+ * then handel them as a GameUpdater.
+ * </p>
+ * So rather than doing something simple like this:
+ * <pre>
+ * {@code
+ * aComponent.addKeyListener(myListener);
+ * }
+ * </pre>
+ * You will need to create the wrapper, add the listener to the wrapper, then 
+ * add the wrapper to the key-listening component and the game component:
+ * <pre>
+ * {@code
+ * KeyEventBatchProcessor keyBatchProcessor = 
+ *     new KeyEventBatchProcessor(myListener);
+ * aComponent.addKeyListener(keyBatchProcessor);
+ * gameComponent.addUpdater(keyBatchProcessor);
+ * }
+ * </pre>
+ */
 public class KeyEventBatchProcessor implements KeyListener, GameUpdater{
     private ConcurrentLinkedQueue<KeyEventWrapper> todo = 
         new ConcurrentLinkedQueue<KeyEventWrapper>();

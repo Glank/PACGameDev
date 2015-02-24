@@ -24,6 +24,7 @@ docs: pac.jar examples.jar
 	javadoc \
 		-d docs \
 		-sourcepath . \
+		-classpath pac.jar:examples.jar \
 		-subpackages org.pac:examples
 
 clean:
