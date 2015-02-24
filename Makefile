@@ -45,4 +45,5 @@ clean:
 clean_all: clean
 	rm -f pac.jar
 	rm -f examples.jar
+	rm -f test.jar
 	rm -rf docs
