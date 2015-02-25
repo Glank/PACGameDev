@@ -72,8 +72,8 @@ public class BounceEngine implements CollisionListener, GameUpdater{
         collisionEngine.update(dt);
     }
     
+    static int count = 0;
     public void handelCollision(CollisionInstance instance){
-        System.out.println("Reached.");
         Bouncer a = boundsIndex.get(instance.getA());
         Bouncer b = boundsIndex.get(instance.getB());
         if(a==null || b==null)
@@ -81,9 +81,9 @@ public class BounceEngine implements CollisionListener, GameUpdater{
 
         double xOverlap = a.getBounds().getXOverlap(b.getBounds());
         double yOverlap = a.getBounds().getYOverlap(b.getBounds());
-        assert(xOverlap>0);
-        assert(yOverlap>0);
-        if(xOverlap>yOverlap){
+        assert(xOverlap>=0);
+        assert(yOverlap>=0);
+        if(xOverlap<yOverlap){
             //Handle X bounce
             if(a.onXBounce()==Bouncer.BOUNCE && b.onXBounce()==Bouncer.BOUNCE)
                 elasticBounceX(a,b);

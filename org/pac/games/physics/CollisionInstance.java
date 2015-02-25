@@ -12,6 +12,9 @@ public class CollisionInstance{
     public MovingRectangle getB(){
         return b;
     }
+    public boolean stillActive(){
+        return a.intersects(b);
+    }
     public boolean contains(MovingRectangle r){
         return r==a || r==b;
     }

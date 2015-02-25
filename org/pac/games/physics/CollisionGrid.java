@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.LinkedList;
 
 /**
-This is a high level grid for figuring out which rectangles *might* collide.
-**/
+ * This is a high level grid for figuring out which rectangles *might* collide.
+ */
 public class CollisionGrid{
     private int xDim, yDim;
     private boolean autoresize;
@@ -99,6 +99,7 @@ public class CollisionGrid{
     **/
     private double getNextCollisions(
         List<MovingRectangle> rectangles,  //input
+        CollisionsState curCollisions, //input
         double dt, //input
         double nextCollisionTime, //input
         LinkedList<CollisionInstance> nextCollisions //output
@@ -112,14 +113,20 @@ public class CollisionGrid{
                 );
                 if(whenIntersects!=Double.NaN && whenIntersects>=0 && whenIntersects<dt){
                     if(whenIntersects<nextCollisionTime){
-                        nextCollisionTime = whenIntersects;
-                        nextCollisions.clear();
-                        nextCollisions.add(new CollisionInstance(a,b));
+                        CollisionInstance collision = new CollisionInstance(a,b);
+                        if(!curCollisions.contains(collision)){
+                            nextCollisionTime = whenIntersects;
+                            nextCollisions.clear();
+                            nextCollisions.add(collision);
+                        }
                     }
                     else if(whenIntersects==nextCollisionTime){
                         CollisionInstance collision = new CollisionInstance(a,b);
-                        if(!nextCollisions.contains(collision))
+                        if(!curCollisions.contains(collision) && 
+                            !nextCollisions.contains(collision)
+                        ){
                             nextCollisions.add(collision);
+                        }
                     }
                 }
             }
@@ -134,6 +141,7 @@ public class CollisionGrid{
     @SuppressWarnings("unchecked")
     public double getNextCollisions(
         Iterable<MovingRectangle> rectangles,  //input
+        CollisionsState curCollisions,
         double dt, //input
         LinkedList<CollisionInstance> nextCollisions //output
     ){
@@ -143,7 +151,7 @@ public class CollisionGrid{
             for(int y = 0; y < yDim; y++){
                 nextCollisionTime = getNextCollisions(
                     (Vector<MovingRectangle>)potentialColliders[x][y], 
-                    dt, nextCollisionTime,
+                    curCollisions, dt, nextCollisionTime,
                     nextCollisions
                 );
             }

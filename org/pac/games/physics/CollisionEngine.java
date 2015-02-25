@@ -11,6 +11,7 @@ public class CollisionEngine implements GameUpdater{
     private Vector<MovingRectangle> rectangles = new Vector<MovingRectangle>();
     private LinkedList<CollisionListener> listeners =
         new LinkedList<CollisionListener>();
+    private CollisionsState collisions = new CollisionsState();
     private CollisionGrid collisionGrid = new CollisionGrid();
 
     public void addListener(CollisionListener listener){
@@ -31,9 +32,11 @@ public class CollisionEngine implements GameUpdater{
             handelCollision(collision);
     }
     public boolean remove(MovingRectangle rectangle){
+        collisions.removeAllWith(rectangle);
         return rectangles.remove(rectangle);
     }
     public void clear(){
+        collisions.clear();
         rectangles.clear();
     }
     private void updateWithoutCollision(double dt){
@@ -49,15 +52,20 @@ public class CollisionEngine implements GameUpdater{
 
     /** returns the remaining amount of time to update */
     private double partialUpdate(double dt){
+        //clear the old collisions
+        collisions.removeAllInactive();
+        //get the next collisions
         LinkedList<CollisionInstance> nextCollisions =
             new LinkedList<CollisionInstance>();
         double nextCollisionTime = collisionGrid.getNextCollisions(
-            rectangles, dt, nextCollisions
+            rectangles, collisions, dt, nextCollisions
         );
+        //if the are within this update
         if(nextCollisionTime<=dt){
             updateWithoutCollision(nextCollisionTime);
             for(CollisionInstance collision:nextCollisions){
                 handelCollision(collision);
+                collisions.add(collision);
             }
             return dt-nextCollisionTime;
         }
