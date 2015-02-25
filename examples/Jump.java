@@ -7,8 +7,8 @@ import java.awt.event.KeyEvent;
 
 public class Jump extends BounceGameWindow{
     private static final long serialVersionUID = 93094849478L;
-    public static final double GRAVITATIONAL_ACCELERATION = 500;
-    public static final double JUMP_VELOCITY = 250;
+    public static final double GRAVITATIONAL_ACCELERATION = 1600;
+    public static final double JUMP_VELOCITY = 800;
     public static final double PLAYER_SPEED = 250;
     public static final double PLAYER_WIDTH = 30;
     public static final double PLAYER_HEIGHT = 50;
