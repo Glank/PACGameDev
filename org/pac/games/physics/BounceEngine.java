@@ -172,22 +172,28 @@ public class BounceEngine implements CollisionListener, GameUpdater{
     }
     public static void stopAgainstX(Bouncer ball, Bouncer wall){
         bulldozeBounceX(ball, wall);
-        ball.getBounds().setDX(ball.getBounds().getDX()>0?1:-1);
+        ball.setDX(ball.getBounds().getDX()>0?1:-1);
+        double dy = ball.getDY();
+        ball.setDY(0);
         double delta = SHORT_INSTANT;
         while(ball.getBounds().intersects(wall.getBounds())){
             ball.getBounds().update(delta);
         }
         assert(!ball.getBounds().intersects(wall.getBounds()));
-        ball.getBounds().setDX(0);
+        ball.setDX(0);
+        ball.setDY(dy);
     }
     public static void stopAgainstY(Bouncer ball, Bouncer wall){
         bulldozeBounceY(ball, wall);
-        ball.getBounds().setDY(ball.getBounds().getDY()>0?1:-1);
+        ball.setDY(ball.getBounds().getDY()>0?1:-1);
+        double dx = ball.getDX();
+        ball.setDX(0);
         double delta = SHORT_INSTANT;
         while(ball.getBounds().intersects(wall.getBounds())){
             ball.getBounds().update(delta);
         }
         assert(!ball.getBounds().intersects(wall.getBounds()));
-        ball.getBounds().setDY(0);
+        ball.setDY(0);
+        ball.setDX(dx);
     }
 }
