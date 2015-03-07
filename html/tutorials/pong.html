@@ -27,7 +27,7 @@ We're going to build a really simple game - Pong. It's the 'Hello World' of
 game development. It was also the very first arcade game ever made.
 </p>
 <div class="captioned">
-<img src="imgs/original_pong.png" />
+<img src="../imgs/original_pong.png" />
 This is what the original Pong looked like. (From <a href="http://en.wikipedia.org/wiki/Pong">Wikipedia</a>)
 </div>
 
@@ -52,7 +52,7 @@ public class Pong extends BounceGameWindow{
   }
 }</code></pre>
 <div class="captioned">
-<img src="imgs/pong01.png" />
+<img src="../imgs/pong01.png" />
 An empty window.
 </div>
 
@@ -96,7 +96,7 @@ So to go over what that new code does:
 </ul>
 </p>
 <div class="captioned">
-<img src="imgs/pong02.png" />
+<img src="../imgs/pong02.png" />
 Just a little ball in the middle.
 </div>
 
@@ -110,7 +110,7 @@ around the screen.
     MovingRectangle ballBounds = new MovingRectangle(315,235,10,10);
     ball = new BouncerSprite(ballBounds);
     //make the ball move:
-    ball.setDX(75); //50 pixels per second right
+    ball.setDX(75); //75 pixels per second right
     ball.setDY(50); //50 pixels per second down
     addSprite(ball);
     //add a border around the entire screen
@@ -134,7 +134,7 @@ public class Pong extends BounceGameWindow{
     MovingRectangle ballBounds = new MovingRectangle(315,235,10,10);
     ball = new BouncerSprite(ballBounds);
     //make the ball move:
-    ball.setDX(75); //50 pixels per second right
+    ball.setDX(75); //75 pixels per second right
     ball.setDY(50); //50 pixels per second down
     addSprite(ball);
     
@@ -174,7 +174,7 @@ You can see more about the <code>BouncerSprite</code> in the
 <a href="../docs/org/pac/games/gui/BouncerSprite.html">documentation</a>.
 </p>
 <div class="captioned">
-<img src="imgs/pong03.png" />
+<img src="../imgs/pong03.png" />
 Now with paddles.
 </div>
 
@@ -201,7 +201,7 @@ public class Pong extends BounceGameWindow{
     MovingRectangle ballBounds = new MovingRectangle(315,235,10,10);
     ball = new BouncerSprite(ballBounds);
     //make the ball move:
-    ball.setDX(75); //50 pixels per second right
+    ball.setDX(75); //75 pixels per second right
     ball.setDY(50); //50 pixels per second down
     addSprite(ball);
     
@@ -238,11 +238,11 @@ class Paddle extends BouncerSprite{
 <p>
 That code should just print out some debug text whenever a key is pressed.
 Notice the <code>@Override</code> that come before the new methods. That's not
-100% necessary, but it's a good safeguard to put in if you're overrideing a method.
+100% necessary, but it's a good safeguard to put in if you're overriding a method.
 It lets the compiler know what you're doing so it can check that you've spelled the
 method name correctly.
 </p>
-<p>Ok, so if you've got that working, lets move onto making the
+<p>OK, so if you've got that working, lets move onto making the
 paddles respond to they keys. You can check which key was pressed/released using
 the <code>getKeyCode()</code> method which returns one of the values from the
 <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/KeyEvent.html">
@@ -274,7 +274,7 @@ of the paddles as we used to set the speed of the ball.
     }
   }</code></pre>
 <div class="captioned">
-<img src="imgs/pong04.png" />
+<img src="../imgs/pong04.png" />
 It's actually starting to look like a video game.
 </div>
 
@@ -304,7 +304,7 @@ And there's a <a href="../docs/org/pac/games/BounceGameWindow.html#paint(java.aw
 Lets start with the first problem - recognizing when the player has scored.
 We've guessed that we'll want to used the <code>handleCollision</code> method
 somehow. According to the docs, this method gets called whenever the physics engine
-"detects a collision". We could start of by just implementing the method with
+"detects a collision". We could start off by just implementing the method with
 a print statement: 
 </p>
 <pre><code class="java">  @Override
@@ -320,7 +320,7 @@ the program first starts for some reason. We can learn more by looking at the
 class since one of those gets passed to us when the method is called.
 </p>
 <p>
-Ok, so maybe that doesn't make it glaringly obvious what we should do. That
+OK, so maybe that doesn't make it glaringly obvious what we should do. That
 happens sometimes. It would take a whole bunch more digging to figure out what
 to do, so I'm just going to tell you. If you came across a problem like this in
 real life, this would be a good time to Google, then if that didn't work, just
@@ -337,7 +337,7 @@ So we can do something like this:
     }
   }</code></pre>
 <p>
-That'll limit our print statment to only collisions involving the ball.
+That'll limit our print statement to only collisions involving the ball.
 And that's halfway there. Now we just need to do something to recognize
 only the collisions with the left and right wall. 
 </p>
@@ -379,7 +379,7 @@ which gets passed a <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/G
 <code>java.awt.*</code> which the docs will tell you. 
 </p>
 <p>
-Thats a standard java class, so it's huge. But we only need to call a few of it's method,
+That's a standard java class, so it's huge. But we only need to call a few of it's method,
 which are all pretty simple. We'll set the color for our scoreboard to black,
 set the font to a bold courier at 25pt, then draw the scores on the top of the screen.
 </p>
@@ -397,9 +397,148 @@ public class Pong extends BounceGameWindow{
   }
   ...</code></pre>
 <div class="captioned">
-<img src="imgs/pong05.png" />
+<img src="../imgs/pong05.png" />
 Now keeping score.
 </div>
+
+<h2>Resetting the Ball</h2>
+<p>
+It would be nice if the ball went back to the center of the screen after a point
+was scored. We could just remove the old ball from the game entirely then add a new ball
+entirely. Or, we might do some more digging through the docs and we might find
+the method <a href="../docs/org/pac/games/BounceGameWindow.html#teleport(org.pac.games.physics.Bouncer, org.pac.games.physics.MovingRectangle)">
+<code>teleport</code></a> which moves the ball <em>within the physics engine</em>.
+So we'll create a <code>resetBall</code> method and call it in the <code>handleCollision</code> method.
+</p>
+<pre><code class="java">  ...
+  public void resetBall(){
+    teleport(ball, new MovingRectangle(315,235,10,10));
+    //make the ball move:
+    ball.setDX(75); //75 pixels per second right
+    ball.setDY(50); //50 pixels per second down
+  }
+  @Override
+  public void handleCollision(CollisionInstance e){
+    if(e.contains(ball) &amp;&amp; ball.leftX()&lt;1){
+      rightScore++;
+      resetBall();
+    }
+    else if(e.contains(ball) &amp;&amp; ball.rightX()&gt;639){
+      leftScore++;
+      resetBall();
+    }
+  }
+  ...</code></pre>
+<p>
+You'll notice that we also need to reset the ball's speed in the <code>resetBall</code> method.
+(The <code>teleport</code> method stops the ball if it's teleported to a non-moving <code>MovingRectangle</code>).
+We're also going to make another change to the code. It's for design purposes, not for any functional reason.
+In programming, we want to follow the principal of "Don't Repeat Yourself", or 
+<a href="http://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a>. So we'll replace some duplicate
+code in the <code>Pong</code> constructor:
+</p>
+<pre><code class="java">  public Pong(){
+    //setup the ball
+    ball = new BouncerSprite();
+    addSprite(ball);
+    resetBall();
+    
+    //setup the paddles
+    leftPaddle = new Paddle(30, 200);
+    rightPaddle = new Paddle(600, 200);
+    addSprite(leftPaddle);
+    addSprite(rightPaddle);
+    
+    //add a border around the entire screen
+    addBounceBorder(0,0,640,480);
+  }</code></pre>
+
+<h2>Accelerating the Ball</h2>
+<p>
+That ball is going pretty slow. I think we want the ball to be slow in the
+beginning, but as the game goes on, it should get faster. We're going to use
+3 more methods from the docs:
+<ul>
+  <li>We'll override the <a href="../docs/org/pac/games/BounceGameWindow.html#update(double)">
+    <code>update</code></a> method from <code>BounceGameWindow</code>.</li>
+  <li>We'll use <code>ball</code>'s <a href="../docs/org/pac/games/physics/Bouncer.html#nondirectionalAccelerateX(double)">
+    <code>nondirectionalAccelerateX</code></a> and</li>
+  <li><a href="../docs/org/pac/games/physics/Bouncer.html#nondirectionalAccelerateY(double)">
+    <code>nondirectionalAccelerateY</code></a> methods to make the ball go faster.</li>
+</ul>
+</p>
+<pre><code class="java">  @Override
+  public void update(double dt){
+    ball.nondirectionalAccelerateX(dt*20);
+    ball.nondirectionalAccelerateY(dt*20);
+  }</code></pre>
+<p>
+The <code>update</code> method get's passed the <code>dt</code> parameter which is the number of seconds
+which have passed since the last time the method got called. Since the <code>nondirectionalAccelerate_</code>
+methods just accelerate the ball a fixed amount, we need to multiply the acceleration factor by the
+change in time.
+</p>
+
+<h2>Randomizing the Ball's Start Direction</h2>
+<p>
+It's kind of boring that the ball always starts going exactly the same direction. We should fix that.
+There's a method <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html#random()">
+<code>Math.random()</code></a> that returns a random number between 0 and 1. We can use this to
+do pretty much anything random we want. First of all, when we reset the ball, it should go either
+left or right and either up or down:
+</p>
+<pre><code class="java">  public void resetBall(){
+    teleport(ball, new MovingRectangle(315,235,10,10));
+    //make the ball move:
+    if(Math.random()&lt;0.5){
+      ball.setDX(75); //75 pixels per second right
+    }
+    else{
+      ball.setDX(-75); //75 pixels per second left
+    }
+    if(Math.random()&lt;0.5){
+      ball.setDY(50); //50 pixels per second down
+    }
+    else{
+      ball.setDY(-50); //50  pixels per second up
+    }
+  }</code></pre>
+<p>
+Notice that the if statements basically just mean "with a 50% chance".
+</p>
+
+<h2>Finishing Touches</h2>
+<p>
+There are a couple more finishing touches that'll be nice to have. We should put
+a title on our window ("Pong") and a horizontal line down the middle like the
+original game had.
+</p>
+<pre><code class="java">public class Pong extends BounceGameWindow{
+  ...
+  public Pong(){
+    ...
+    //set the title
+    setTitle("Pong");
+  }
+  ...
+  @Override
+  public void paint(Graphics g){
+    ...
+    //draw the horizontal line
+    g.setColor(Color.GRAY);
+    g.drawLine(320,0,320,480);
+  }
+  ...
+}</pre></code>
+<div class="captioned">
+<img src="../imgs/pong06.png" />
+That looks like the same game to me.
+</div>
+
+<h2>Doing More</h2>
+<p>Now it's up to you to make it a better game (if you feel like it). Add speed boosts to the paddles when you press
+a button. Make the ball take random bad-bounces. Give the players a fixed number of "lives". Whatever you want - 
+it's up to you.</p>
 
 </body>
 </html>
