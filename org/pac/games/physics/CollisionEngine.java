@@ -29,7 +29,7 @@ public class CollisionEngine implements GameUpdater{
         }
         rectangles.add(rectangle);
         for(CollisionInstance collision:collisions)
-            handelCollision(collision);
+            handleCollision(collision);
     }
     public boolean remove(MovingRectangle rectangle){
         collisions.removeAllWith(rectangle);
@@ -44,9 +44,9 @@ public class CollisionEngine implements GameUpdater{
         for(MovingRectangle rectangle:rectangles)
             rectangle.update(dt);
     }
-    private void handelCollision(CollisionInstance collision){
+    private void handleCollision(CollisionInstance collision){
         for(CollisionListener listener:listeners)
-            listener.handelCollision(collision);
+            listener.handleCollision(collision);
     }
 
 
@@ -64,7 +64,7 @@ public class CollisionEngine implements GameUpdater{
         if(nextCollisionTime<=dt){
             updateWithoutCollision(nextCollisionTime);
             for(CollisionInstance collision:nextCollisions){
-                handelCollision(collision);
+                handleCollision(collision);
                 collisions.add(collision);
             }
             return dt-nextCollisionTime;

@@ -69,7 +69,7 @@ public class BallChase extends BounceGameWindow{
     }
 
     @Override
-    public void handelCollision(CollisionInstance instance){
+    public void handleCollision(CollisionInstance instance){
         if(instance.contains(ball) && instance.contains(player))
             points++;
         if(instance.contains(enemy) && instance.contains(player))

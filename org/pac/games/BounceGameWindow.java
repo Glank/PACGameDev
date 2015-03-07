@@ -119,5 +119,5 @@ public class BounceGameWindow extends SimpleGameWindow
      * physics engine detects a collision. 
      * @see CollisionListener
      */
-    public void handelCollision(CollisionInstance instance){}
+    public void handleCollision(CollisionInstance instance){}
 }

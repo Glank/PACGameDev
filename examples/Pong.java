@@ -63,7 +63,7 @@ public class Pong extends BounceGameWindow{
             right.setDY(0);
     }
     @Override
-    public void handelCollision(CollisionInstance instance){
+    public void handleCollision(CollisionInstance instance){
         if(instance.contains(ball)){
             if(instance.contains(leftCatcher)){
                 teleport(ball, getBallStart());

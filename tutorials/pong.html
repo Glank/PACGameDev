@@ -1,0 +1,402 @@
+<html>
+<head>
+<link rel="stylesheet" href="css/default.css">
+<link rel="stylesheet" href="css/tutorial.css">
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="js/highlight.pack.js"></script>
+<script>
+hljs.configure({languages:['java']});
+hljs.initHighlightingOnLoad();
+/*
+$(document).ready(function () {
+    $('body').bind('copy paste', function (e) {
+        alert("Please don't just copy/paste. You won't learn that way.");
+    });
+});
+//*/
+</script>
+<style>
+</style>
+<!--body oncopy="return false" oncut="return false" onpaste="return false"-->
+<title>Let's Remake Pong</title>
+</head>
+<body>
+
+<div class="content">
+
+<h1>Let's Remake Pong</h1>
+<p>
+We're going to build a really simple game - Pong. It's the 'Hello World' of
+game development. It was also the very first arcade game ever made.
+</p>
+<div class="captioned">
+<img src="imgs/original_pong.png" />
+This is what the original Pong looked like. (From <a href="http://en.wikipedia.org/wiki/Pong">Wikipedia</a>)
+</div>
+
+
+<h2>Getting Started</h2>
+<p>
+Open up Dr. Java and let's get started. The code to start up an empty game is
+below. We'll be using a <a href="../docs/index.html">whole bunch of libraries</a>
+ which you should just go ahead and import.
+Notice that our class <code>extends BounceGameWindow</code> 
+(which means that the class is a BounceGameWindow) and then try
+to figure out what our main method is doing. The code <code>new Pong()</code>
+creates a new window, then the method <code>.start();</code> opens that window
+on the screen. 
+</p>
+<pre><code class="java">import org.pac.games.*;
+import org.pac.games.physics.*;
+import org.pac.games.gui.*;
+public class Pong extends BounceGameWindow{
+  public static void main(String[] args){
+    new Pong().start();
+  }
+}</code></pre>
+<div class="captioned">
+<img src="imgs/pong01.png" />
+An empty window.
+</div>
+
+<h2>Adding a Ball</h2>
+<p>
+Lets start off by adding a ball and stuff. We'll create a <em>constructor</em>
+for our Pong window which sets up and adds a ball <em>sprite</em>.
+A constructor is a method that gets called whenever you
+create a new instance of a class (like when we called <code>new Pong()</code>).
+A constructor is defined like any other method but without a return type and it
+has to be the same name as the class. 
+A sprite is a type of object which can move around and gets drawn on the screen.
+</p>
+<pre><code class="java">import org.pac.games.*;
+import org.pac.games.physics.*;
+import org.pac.games.gui.*;
+public class Pong extends BounceGameWindow{
+  BouncerSprite ball;
+  public Pong(){
+    MovingRectangle ballBounds = new MovingRectangle(315,235,10,10);
+    ball = new BouncerSprite(ballBounds);
+    addSprite(ball);
+  }
+  public static void main(String[] args){
+    new Pong().start();
+  }
+}</code></pre>
+<p>
+So to go over what that new code does:
+<ul>
+  <li>We create a <code>BouncerSprite</code> variable called <code>ball</code> in the
+    class (so that we can access it in other methods).</li>
+  <li>We define a constructor which:
+    <ul>
+      <li>Sets up <code>ballBounds</code> which is a <code>MovingRectangle</code> in the 
+        middle of the screen (315, 235) with a width of 10 and a height of 10.</li>
+      <li>Creates <code>ball</code> with those bounds.</li>
+      <li>Adds the ball to the screen.</li>
+    </ul>
+  </li>
+</ul>
+</p>
+<div class="captioned">
+<img src="imgs/pong02.png" />
+Just a little ball in the middle.
+</div>
+
+<h2>Making the Ball Bounce</h2>
+<p>
+Lucky for you, we're working with a pre-made physics engine. So we don't actually have
+to code bouncing mechanics manually. We'll just tell the ball to move and put a border
+around the screen.
+</p>
+<pre><code class="java">  public Pong(){
+    MovingRectangle ballBounds = new MovingRectangle(315,235,10,10);
+    ball = new BouncerSprite(ballBounds);
+    //make the ball move:
+    ball.setDX(75); //50 pixels per second right
+    ball.setDY(50); //50 pixels per second down
+    addSprite(ball);
+    //add a border around the entire screen
+    addBounceBorder(0,0,640,480);
+  }</code></pre>
+
+<h2>Adding The Paddles</h2>
+<p>
+Lets define a class for paddles - not because we <em>need</em> to but because its just good
+practice. Take a look at the code below. We'll add 2 variables, <code>leftPaddle</code>
+and <code>rightPaddle</code>, to the <code>Pong</code> class. Then we'll set them up
+in the constructor. We can use the new class we'll define at the bottom of the file.
+</p>
+<pre><code class="java">import org.pac.games.*;
+import org.pac.games.physics.*;
+import org.pac.games.gui.*;
+public class Pong extends BounceGameWindow{
+  BouncerSprite ball, leftPaddle, rightPaddle;
+  public Pong(){
+    //setup the ball
+    MovingRectangle ballBounds = new MovingRectangle(315,235,10,10);
+    ball = new BouncerSprite(ballBounds);
+    //make the ball move:
+    ball.setDX(75); //50 pixels per second right
+    ball.setDY(50); //50 pixels per second down
+    addSprite(ball);
+    
+    //setup the paddles
+    leftPaddle = new Paddle(10, 200);
+    rightPaddle = new Paddle(620, 200);
+    addSprite(leftPaddle);
+    addSprite(rightPaddle);
+    
+    //add a border around the entire screen
+    addBounceBorder(0,0,640,480);
+  }
+  public static void main(String[] args){
+    new Pong().start();
+  }
+}
+class Paddle extends BouncerSprite{
+  public Paddle(double x, double y){
+    //Setup this BouncerSprite at (x,y) with a width of 10, a height
+    //of 80. And one that will DO_NOTHING on an X collision and will
+    //STOP on a Y collision.
+    super(new MovingRectangle(x,y,10,80),
+          Bouncer.DO_NOTHING,Bouncer.STOP);
+  }
+}</code></pre>
+<p>
+The <code>Paddle</code> class <code>extends BouncerSprite</code> just like the 
+<code>Pong</code> class <code>extends BounceGameWindow</code>. That's why we can store
+the paddles in <code>BouncerSprite</code> variables - because they're just special
+types of <code>BouncerSprite</code>s.
+</p>
+<p>
+The <code>super</code> keyword in the <code>Paddle</code> constructor is how you call
+the constructor of the <em>parent class</em> (the class which the new class 
+<code>extends</code>). In this case, the parent class is <code>BouncerSprite</code>.
+You can see more about the <code>BouncerSprite</code> in the 
+<a href="../docs/org/pac/games/gui/BouncerSprite.html">documentation</a>.
+</p>
+<div class="captioned">
+<img src="imgs/pong03.png" />
+Now with paddles.
+</div>
+
+<h2>Controlling the Paddles</h2>
+<p>
+Its not really a game unless the players get to do something, right?
+So now we've got to get the paddles under control. Let's make the W and S keys
+control the left paddle and the up and down keys control the right one.
+We're going to use something called <em>method overriding</em> which is when
+you write a method that takes the place of another method in the parent class.
+We'll be overriding the <code>keyPressed</code> and <code>keyReleased</code>
+methods in <code>BounceGameWindow</code> which get called whenever a key on the
+keyboard is pressed or released. We'll also need to import <code>KeyEvent</code>.
+To start off, let's just get those methods set up:
+</p>
+<pre><code class="java">import org.pac.games.*;
+import org.pac.games.physics.*;
+import org.pac.games.gui.*;
+import java.awt.event.KeyEvent;
+public class Pong extends BounceGameWindow{
+  BouncerSprite ball, leftPaddle, rightPaddle;
+  public Pong(){
+    //setup the ball
+    MovingRectangle ballBounds = new MovingRectangle(315,235,10,10);
+    ball = new BouncerSprite(ballBounds);
+    //make the ball move:
+    ball.setDX(75); //50 pixels per second right
+    ball.setDY(50); //50 pixels per second down
+    addSprite(ball);
+    
+    //setup the paddles
+    leftPaddle = new Paddle(10, 200);
+    rightPaddle = new Paddle(620, 200);
+    addSprite(leftPaddle);
+    addSprite(rightPaddle);
+    
+    //add a border around the entire screen
+    addBounceBorder(0,0,640,480);
+  }
+  @Override
+  public void keyPressed(KeyEvent e){
+    System.out.println("A key was pressed.");
+  }
+  @Override
+  public void keyReleased(KeyEvent e){
+    System.out.println("A key was released.");
+  }
+  public static void main(String[] args){
+    new Pong().start();
+  }
+}
+class Paddle extends BouncerSprite{
+  public Paddle(double x, double y){
+    //Setup this BouncerSprite at (x,y) with a width of 10, a height
+    //of 80. And one that will DO_NOTHING on an X collision and will
+    //STOP on a Y collision.
+    super(new MovingRectangle(x,y,10,80),
+          Bouncer.DO_NOTHING,Bouncer.STOP);
+  }
+}</code></pre>
+<p>
+That code should just print out some debug text whenever a key is pressed.
+Notice the <code>@Override</code> that come before the new methods. That's not
+100% necessary, but it's a good safeguard to put in if you're overrideing a method.
+It lets the compiler know what you're doing so it can check that you've spelled the
+method name correctly.
+</p>
+<p>Ok, so if you've got that working, lets move onto making the
+paddles respond to they keys. You can check which key was pressed/released using
+the <code>getKeyCode()</code> method which returns one of the values from the
+<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/KeyEvent.html">
+<code>KeyEvent</code></a> class. And we'll use the same methods to set the speed
+of the paddles as we used to set the speed of the ball.
+</p>
+<pre><code class="java">@Override
+  public void keyPressed(KeyEvent e){
+    if(e.getKeyCode()==KeyEvent.VK_W){
+      leftPaddle.setDY(-500); //make the left paddle start moving up
+    }
+    else if(e.getKeyCode()==KeyEvent.VK_S){
+      leftPaddle.setDY(500); //make the left paddle start moving down
+    }
+    if(e.getKeyCode()==KeyEvent.VK_UP){
+      rightPaddle.setDY(-500); //make the right paddle start moving up
+    }
+    else if(e.getKeyCode()==KeyEvent.VK_DOWN){
+      rightPaddle.setDY(500); //make the right paddle start moving down
+    }
+  }
+  @Override
+  public void keyReleased(KeyEvent e){
+    if(e.getKeyCode()==KeyEvent.VK_W || e.getKeyCode()==KeyEvent.VK_S){
+      leftPaddle.setDY(0); //stop the left paddle
+    }
+    else if(e.getKeyCode()==KeyEvent.VK_UP || e.getKeyCode()==KeyEvent.VK_DOWN){
+      rightPaddle.setDY(0); //stop the right paddle
+    }
+  }</code></pre>
+<div class="captioned">
+<img src="imgs/pong04.png" />
+It's actually starting to look like a video game.
+</div>
+
+<h2>Keeping Score</h2>
+<p>
+We've got some moving parts, so now its time to start keeping score. 
+That actually involves several different steps, if you think about it. 
+We've got to:
+<ul>
+  <li>recognize when one of the players has scored;</li>
+  <li>keep track of the score (because otherwise, what's the point);</li>
+  <li>and draw the score on the screen so the players can see how they're doing.</li>
+</ul>
+</p>
+<p>
+So how do we get started on all that? We could skim 
+<a href="../docs/org/pac/games/BounceGameWindow.html">the docs</a> for some
+other methods to override or call, that's usually a pretty good place to start.
+You might see the 
+<a href="../docs/org/pac/games/BounceGameWindow.html#handleCollision(org.pac.games.physics.CollisionInstance)">
+<code>handleCollision</code></a> method, that's a method to override that
+looks like it could help with recognizing when the player has scored.
+And there's a <a href="../docs/org/pac/games/BounceGameWindow.html#paint(java.awt.Graphics)">
+<code>paint</code></a> method: that'll help us draw the score to the screen.
+</p>
+<p>
+Lets start with the first problem - recognizing when the player has scored.
+We've guessed that we'll want to used the <code>handleCollision</code> method
+somehow. According to the docs, this method gets called whenever the physics engine
+"detects a collision". We could start of by just implementing the method with
+a print statement: 
+</p>
+<pre><code class="java">@Override
+  public void handleCollision(CollisionInstance e){
+    System.out.println("handleCollision called");
+  }</code></pre>
+<p>
+That should give us a better idea how the method works. Now we run the code
+and we see that, yeah, this method does get called when the ball hits stuff.
+But also when the paddles hit the top or bottom, and a couple of times when
+the program first starts for some reason. We can learn more by looking at the
+<a href="../docs/org/pac/games/physics/CollisionInstance.html"><code>CollisionInstance</code></a>
+class since one of those gets passed to us when the method is called.
+</p>
+<p>
+Ok, so maybe that doesn't make it glaringly clear what we should do. That
+happens sometimes. It would take a whole bunch more digging to figure out what
+to do, so I'm just going to tell you. If you came across a problem like this in
+real life, this would be a good time to Google, then if that didn't work, just
+ask someone more experienced for help.
+</p>
+<p>
+We can use the <code>contains</code> method with <code>ball</code> because
+<code>ball</code> is a <code>BouncerSprite</code> which is also a <code>Bouncer</code>.
+So we can do something like this:
+<pre><code class="java">@Override
+  public void handleCollision(CollisionInstance e){
+    if(e.contains(ball)){
+      System.out.println("handleCollision called containing ball");
+    }
+  }</code></pre>
+<p>
+
+<pre><code class="java">import org.pac.games.*;
+import org.pac.games.physics.*;
+import org.pac.games.gui.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+public class Pong extends BounceGameWindow{
+  BouncerSprite ball, leftPaddle, rightPaddle;
+  MovingRectangle leftGoal, rightGoal;
+  int leftScore, rightScore;
+  public Pong(){
+    //setup the ball
+    ...
+    //setup the paddles
+    ...
+    
+    //setup the goals and scores
+    leftGoal = new MovingRectangle(0,0,1,getDisplayHeight());
+    rightGoal = new MovingRectangle(getDisplayWidth()-1,0,1,getDisplayHeight());
+    leftScore = 0;
+    rightScore = 0;
+    add(leftGoal);
+    add(rightGoal);
+    
+    //add a border around the entire screen
+    ...
+  }
+  @Override
+  public void keyPressed(KeyEvent e){
+    ...
+  }
+  @Override
+  public void keyReleased(KeyEvent e){
+    ...
+  }
+  @Override
+  public void handleCollision(CollisionInstance e){
+    if(e.contains(ball) &amp;&amp; e.contains(leftGoal)){
+      rightScore++;
+    }
+    else if(e.contains(ball) &amp;&amp; e.contains(rightGoal)){
+      leftScore++;
+    }
+  }
+  @Override
+  public void paint(Graphics g){
+    //draw the scores
+    g.setColor(Color.BLACK);
+    g.setFont(new Font("Courier", Font.BOLD, 25));
+    g.drawString(Integer.toString(leftScore), 80, 25);
+    g.drawString(Integer.toString(rightScore), 540, 25);
+  }
+  ...</code></pre>
+<div class="captioned">
+<img src="imgs/pong05.png" />
+We've got numbers! Who doesn't love numbers.
+</div>
+
+</body>
+</html>
