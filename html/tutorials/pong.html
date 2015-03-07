@@ -1,26 +1,23 @@
 <html>
 <head>
-<link rel="stylesheet" href="css/default.css">
-<link rel="stylesheet" href="css/tutorial.css">
+<link rel="stylesheet" href="../css/default.css">
+<link rel="stylesheet" href="../css/tutorial.css">
 <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script src="js/highlight.pack.js"></script>
+<script src="../js/highlight.pack.js"></script>
 <script>
 hljs.configure({languages:['java']});
 hljs.initHighlightingOnLoad();
-/*
 $(document).ready(function () {
     $('body').bind('copy paste', function (e) {
         alert("Please don't just copy/paste. You won't learn that way.");
     });
 });
-//*/
 </script>
 <style>
 </style>
-<!--body oncopy="return false" oncut="return false" onpaste="return false"-->
 <title>Let's Remake Pong</title>
 </head>
-<body>
+<body oncopy="return false" oncut="return false" onpaste="return false">
 
 <div class="content">
 
@@ -142,8 +139,8 @@ public class Pong extends BounceGameWindow{
     addSprite(ball);
     
     //setup the paddles
-    leftPaddle = new Paddle(10, 200);
-    rightPaddle = new Paddle(620, 200);
+    leftPaddle = new Paddle(30, 200);
+    rightPaddle = new Paddle(600, 200);
     addSprite(leftPaddle);
     addSprite(rightPaddle);
     
@@ -209,8 +206,8 @@ public class Pong extends BounceGameWindow{
     addSprite(ball);
     
     //setup the paddles
-    leftPaddle = new Paddle(10, 200);
-    rightPaddle = new Paddle(620, 200);
+    leftPaddle = new Paddle(30, 200);
+    rightPaddle = new Paddle(600, 200);
     addSprite(leftPaddle);
     addSprite(rightPaddle);
     
@@ -252,7 +249,7 @@ the <code>getKeyCode()</code> method which returns one of the values from the
 <code>KeyEvent</code></a> class. And we'll use the same methods to set the speed
 of the paddles as we used to set the speed of the ball.
 </p>
-<pre><code class="java">@Override
+<pre><code class="java">  @Override
   public void keyPressed(KeyEvent e){
     if(e.getKeyCode()==KeyEvent.VK_W){
       leftPaddle.setDY(-500); //make the left paddle start moving up
@@ -310,7 +307,7 @@ somehow. According to the docs, this method gets called whenever the physics eng
 "detects a collision". We could start of by just implementing the method with
 a print statement: 
 </p>
-<pre><code class="java">@Override
+<pre><code class="java">  @Override
   public void handleCollision(CollisionInstance e){
     System.out.println("handleCollision called");
   }</code></pre>
@@ -323,7 +320,7 @@ the program first starts for some reason. We can learn more by looking at the
 class since one of those gets passed to us when the method is called.
 </p>
 <p>
-Ok, so maybe that doesn't make it glaringly clear what we should do. That
+Ok, so maybe that doesn't make it glaringly obvious what we should do. That
 happens sometimes. It would take a whole bunch more digging to figure out what
 to do, so I'm just going to tell you. If you came across a problem like this in
 real life, this would be a good time to Google, then if that didn't work, just
@@ -333,57 +330,63 @@ ask someone more experienced for help.
 We can use the <code>contains</code> method with <code>ball</code> because
 <code>ball</code> is a <code>BouncerSprite</code> which is also a <code>Bouncer</code>.
 So we can do something like this:
-<pre><code class="java">@Override
+<pre><code class="java">  @Override
   public void handleCollision(CollisionInstance e){
     if(e.contains(ball)){
       System.out.println("handleCollision called containing ball");
     }
   }</code></pre>
 <p>
-
-<pre><code class="java">import org.pac.games.*;
-import org.pac.games.physics.*;
-import org.pac.games.gui.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-public class Pong extends BounceGameWindow{
+That'll limit our print statment to only collisions involving the ball.
+And that's halfway there. Now we just need to do something to recognize
+only the collisions with the left and right wall. 
+</p>
+<pre><code class="java">  @Override
+  public void handleCollision(CollisionInstance e){
+    if(e.contains(ball) &amp;&amp; ball.leftX()&lt;1){
+      System.out.println("right scored");
+    }
+    else if(e.contains(ball) &amp;&amp; ball.rightX()&gt;639){
+      System.out.println("left scored");
+    }
+  }</code></pre>
+<p>
+That solves that problem. The next one is way easier - keeping track of the
+score. We'll just define two new class variables, <code>leftScore</code> and
+<code>rightScore</code>, and then we'll increment them instead of having
+print statements:
+</p>
+<pre><code class="java">public class Pong extends BounceGameWindow{
   BouncerSprite ball, leftPaddle, rightPaddle;
-  MovingRectangle leftGoal, rightGoal;
   int leftScore, rightScore;
-  public Pong(){
-    //setup the ball
-    ...
-    //setup the paddles
-    ...
-    
-    //setup the goals and scores
-    leftGoal = new MovingRectangle(0,0,1,getDisplayHeight());
-    rightGoal = new MovingRectangle(getDisplayWidth()-1,0,1,getDisplayHeight());
-    leftScore = 0;
-    rightScore = 0;
-    add(leftGoal);
-    add(rightGoal);
-    
-    //add a border around the entire screen
-    ...
-  }
-  @Override
-  public void keyPressed(KeyEvent e){
-    ...
-  }
-  @Override
-  public void keyReleased(KeyEvent e){
-    ...
-  }
+  ...
   @Override
   public void handleCollision(CollisionInstance e){
-    if(e.contains(ball) &amp;&amp; e.contains(leftGoal)){
+    if(e.contains(ball) &amp;&amp; ball.leftX()&lt;1){
       rightScore++;
     }
-    else if(e.contains(ball) &amp;&amp; e.contains(rightGoal)){
+    else if(e.contains(ball) &amp;&amp; ball.rightX()&gt;639){
       leftScore++;
     }
   }
+  ...
+}</code></pre>
+<p>
+That's old stuff. Drawing those scores to the screen is something new. Like
+we guessed from the docs, we'll need to use the <code>paint</code> method
+which gets passed a <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Graphics.html">
+<code>Graphics</code></a> object. That means we're going to need to <code>import</code>
+<code>java.awt.*</code> which the docs will tell you. 
+</p>
+<p>
+Thats a standard java class, so it's huge. But we only need to call a few of it's method,
+which are all pretty simple. We'll set the color for our scoreboard to black,
+set the font to a bold courier at 25pt, then draw the scores on the top of the screen.
+</p>
+<pre><code class="java">...
+import java.awt.*;
+public class Pong extends BounceGameWindow{
+  ...
   @Override
   public void paint(Graphics g){
     //draw the scores
@@ -395,7 +398,7 @@ public class Pong extends BounceGameWindow{
   ...</code></pre>
 <div class="captioned">
 <img src="imgs/pong05.png" />
-We've got numbers! Who doesn't love numbers.
+Now keeping score.
 </div>
 
 </body>

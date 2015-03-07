@@ -1,6 +1,6 @@
 bin
 *.class
 *.jar
-docs
+html/docs
 pushDocs.sh
 .*.swp

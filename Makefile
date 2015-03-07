@@ -31,9 +31,9 @@ test: test.jar
 	java -jar test.jar
 
 docs: pac.jar examples.jar
-	mkdir -p docs
+	mkdir -p html/docs
 	javadoc \
-		-d docs \
+		-d html/docs \
 		-sourcepath . \
 		-classpath pac.jar:examples.jar \
 		-subpackages org.pac:examples
